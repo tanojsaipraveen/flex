@@ -1,0 +1,1962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix Clone UI</title>
+    <style>
+        /* CSS STYLES */
+        * {
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #111;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Navbar */
+        .nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            z-index: 10;
+            transition-timing-function: ease-in;
+            transition: all 0.5s;
+            background-image: linear-gradient(180deg, rgba(0,0,0,0.7) 10%, transparent);
+        }
+
+        .nav__black {
+            background-color: #111;
+        }
+
+        .nav__left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .nav__logo {
+            width: 90px;
+            object-fit: contain;
+            cursor: pointer;
+        }
+
+        .nav__links {
+            display: none;
+            list-style: none;
+            gap: 20px;
+            font-size: 0.85rem;
+        }
+
+        @media (min-width: 800px) {
+            .nav__links {
+                display: flex;
+            }
+        }
+
+        .nav__links li {
+            cursor: pointer;
+            transition: color 0.2s;
+            color: #e5e5e5;
+        }
+
+        .nav__links li:hover, .nav__links li.active {
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .nav__right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Search Bar */
+        .nav__search {
+            display: flex;
+            align-items: center;
+            border: 1px solid transparent;
+            padding: 5px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .nav__search.active {
+            border: 1px solid white;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .nav__search svg {
+            width: 20px;
+            height: 20px;
+            color: white;
+            margin-right: 5px;
+        }
+
+        .nav__search input {
+            width: 0;
+            background: transparent;
+            border: none;
+            color: white;
+            outline: none;
+            transition: width 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .nav__search.active input {
+            width: 200px;
+            padding: 0 5px;
+        }
+
+        .nav__icon {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .nav__avatar {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Main View Container */
+        #main-view {
+            transition: opacity 0.3s ease;
+        }
+
+        /* Banner */
+        .banner {
+            color: white;
+            object-fit: contain;
+            height: 80vh; /* Taller banner */
+            max-height: 800px;
+            background-size: cover;
+            background-position: center center;
+            position: relative;
+        }
+
+        .banner__contents {
+            margin-left: 40px;
+            padding-top: 25vh;
+        }
+
+        .banner__title {
+            font-size: 3rem;
+            font-weight: 800;
+            padding-bottom: 0.3rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.45);
+        }
+
+        .banner__logo {
+            width: 100%;
+            max-width: 450px;
+            max-height: 140px;
+            object-fit: contain;
+            object-position: left bottom;
+            margin-bottom: 10px;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.7));
+        }
+
+        .banner__description {
+            width: 45rem;
+            line-height: 1.3;
+            padding-top: 1rem;
+            font-size: 1rem;
+            max-width: 400px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.45);
+        }
+
+        .banner__button {
+            cursor: pointer;
+            color: #fff;
+            outline: none;
+            border: none;
+            font-weight: 700;
+            border-radius: 0.2vw;
+            padding-left: 2rem;
+            padding-right: 2rem;
+            margin-right: 1rem;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            background-color: rgba(51, 51, 51, 0.5);
+            transition: all 0.2s;
+        }
+
+        .banner__button:hover {
+            color: #000;
+            background-color: #e6e6e6;
+        }
+
+        .banner--fadeBottom {
+            height: 7.4rem;
+            background-image: linear-gradient(
+                180deg,
+                transparent,
+                rgba(37, 37, 37, 0.61),
+                #111
+            );
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Rows */
+        .row {
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .row h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            margin-left: 40px;
+            color: #e5e5e5;
+        }
+
+        .row__posters-wrapper {
+            position: relative;
+        }
+
+        .row__posters {
+            display: flex;
+            overflow-y: hidden;
+            overflow-x: scroll;
+            padding: 20px 40px;
+            scroll-behavior: smooth;
+        }
+
+        .row__posters::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Horizontal Slider Buttons */
+        .row__slider-btn {
+            position: absolute;
+            top: 20px;
+            bottom: 20px;
+            width: 40px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            z-index: 8;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .row:hover .row__slider-btn {
+            opacity: 1;
+        }
+
+        .row__slider-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+            transform: scale(1.1);
+        }
+
+        .row__slider-btn--left {
+            left: 0;
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+
+        .row__slider-btn--right {
+            right: 0;
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+        }
+
+        /* Hide buttons on mobile where touch scroll is native */
+        @media (max-width: 768px) {
+            .row__slider-btn {
+                display: none;
+            }
+        }
+
+        .row__poster-wrapper {
+            position: relative;
+            margin-right: 10px;
+            transition: transform 450ms;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .row__poster-wrapper:hover {
+            transform: scale(1.08);
+            z-index: 5;
+        }
+
+        .row__posterLarge-wrapper:hover {
+            transform: scale(1.09);
+        }
+
+        .row__poster-wrapper:hover .row__poster {
+            opacity: 0.8;
+        }
+
+        .row__poster {
+            width: 100%;
+            object-fit: contain;
+            max-height: 140px;
+            border-radius: 4px;
+            display: block;
+            transition: opacity 0.2s;
+        }
+
+        .row__posterLarge {
+            max-height: 250px;
+        }
+
+        /* Top 10 Specific Styles */
+        .row__posters--top10 {
+            align-items: flex-end; /* Align bottoms together */
+        }
+
+        .top10__item {
+            display: flex;
+            align-items: flex-end;
+            position: relative;
+            margin-right: 40px;
+            cursor: pointer;
+            transition: transform 450ms;
+            flex-shrink: 0;
+        }
+
+        .top10__item:hover {
+            transform: scale(1.05);
+            z-index: 5;
+        }
+
+        .top10__item:hover .top10__poster {
+            opacity: 0.8;
+        }
+
+        .top10__number {
+            font-size: 180px;
+            font-family: 'Arial Black', Impact, sans-serif;
+            font-weight: 900;
+            line-height: 0.75;
+            color: #000;
+            -webkit-text-stroke: 3px #595959;
+            letter-spacing: -8px;
+            margin-right: -35px; /* Overlaps the poster */
+            z-index: 1;
+            user-select: none;
+        }
+
+        .top10__poster {
+            height: 160px;
+            border-radius: 4px;
+            z-index: 2;
+            box-shadow: -4px 0px 15px rgba(0,0,0,0.6); /* Cast shadow onto the number */
+            transition: opacity 0.2s;
+        }
+
+        @media (min-width: 768px) {
+            .top10__poster {
+                height: 220px;
+            }
+            .top10__number {
+                font-size: 240px;
+                margin-right: -45px;
+                -webkit-text-stroke: 4px #595959;
+                letter-spacing: -12px;
+            }
+        }
+
+        .row__movie-logo {
+            position: absolute;
+            bottom: 8%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            max-height: 40%;
+            object-fit: contain;
+            object-position: bottom center;
+            z-index: 2;
+            pointer-events: none;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.8));
+        }
+
+        /* Search View Styles */
+        .search-view {
+            padding: 100px 40px 40px 40px; /* Offset for navbar */
+            min-height: 100vh;
+        }
+
+        .search-view.hidden {
+            display: none;
+        }
+        
+        .search-view h2 {
+            margin-bottom: 20px;
+            color: #808080;
+            font-size: 1rem;
+            font-weight: normal;
+        }
+
+        .search-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            row-gap: 40px;
+        }
+
+        /* Modals (Hidden by default) */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Detailed Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 30px;
+            z-index: 100;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .modal::-webkit-scrollbar {
+            display: none;
+        }
+
+        .modal.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .modal__content {
+            background-color: #181818;
+            width: 95%;
+            max-width: 850px;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+            margin-bottom: 50px;
+            
+            /* Pop-out transition properties */
+            transform: scale(1) translateY(0);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Initial state of the content when the modal is hidden */
+        .modal.hidden .modal__content {
+            transform: scale(0.9) translateY(40px);
+        }
+
+        .modal__close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 101;
+            background: rgba(20, 20, 20, 0.7);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.2s;
+            border: none;
+        }
+
+        .modal__close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Hero Section inside modal */
+        .modal__hero {
+            position: relative;
+            width: 100%;
+            height: 480px;
+            background-color: #000;
+            /* Added overflow hidden to prevent scaled iframe from bleeding */
+            overflow: hidden;
+        }
+
+        #modal__image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        #modal__trailer-iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Let clicks pass through to buttons */
+            border: none;
+            z-index: 2; /* Above image, below vignette */
+            transform: scale(1.35); /* Zoom in slightly to hide YouTube branding/controls */
+        }
+
+        .modal__hero-vignette {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70%;
+            /* Fixed gradient to transition seamlessly into the #181818 content background */
+            background: linear-gradient(to top, #181818 0%, rgba(24,24,24,0.6) 40%, transparent 100%);
+            z-index: 3;
+        }
+
+        .modal__hero-actions {
+            position: absolute;
+            bottom: 30px;
+            left: 40px;
+            right: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 4;
+        }
+
+        #modal__title_overlay {
+            font-size: 3rem;
+            font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .modal__hero-logo {
+            width: 100%;
+            max-width: 400px;
+            max-height: 120px;
+            object-fit: contain;
+            object-position: left bottom;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.7));
+            z-index: 4;
+            position: relative;
+        }
+
+        .modal__buttons {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .modal__btn-play {
+            background-color: white;
+            color: black;
+            border: none;
+            padding: 0.6rem 2rem;
+            border-radius: 4px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .modal__btn-play:hover {
+            background-color: #d1d1d1;
+        }
+
+        .modal__btn-play svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .modal__server-select {
+            background-color: rgba(42, 42, 42, 0.8);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 0.6rem 1rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .modal__server-select option {
+            background-color: #181818;
+            color: white;
+        }
+
+        .modal__btn-icon {
+            background-color: rgba(42, 42, 42, 0.5);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modal__btn-icon:hover {
+            border-color: white;
+            background-color: rgba(42, 42, 42, 0.8);
+        }
+
+        .modal__btn-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Two Column Info Section */
+        .modal__info-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            padding: 0 40px 40px 40px;
+            position: relative;
+            z-index: 2;
+        }
+
+        @media (max-width: 768px) {
+            .modal__info-container {
+                grid-template-columns: 1fr;
+                padding: 0 20px 20px 20px;
+            }
+            .modal__hero-actions {
+                left: 20px;
+            }
+        }
+
+        .modal__metadata {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #bcbcbc;
+            margin-bottom: 15px;
+        }
+
+        .rating {
+            color: #46d369; /* Netflix Match Green */
+            font-weight: bold;
+        }
+
+        .modal__hd {
+            border: 1px solid #bcbcbc;
+            border-radius: 3px;
+            padding: 0 5px;
+            font-size: 0.8rem;
+        }
+
+        .modal__maturity {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .modal__maturity-badge {
+            border: 1px solid white;
+            padding: 2px 6px;
+            color: white;
+        }
+
+        .modal__subtitle {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        #modal__description {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #fff;
+        }
+
+        .modal__info-sidebar p {
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            line-height: 1.4;
+            color: #fff;
+        }
+
+        .sidebar-label {
+            color: #777;
+        }
+
+        /* Episodes Section Styles (For TV Shows) */
+        .modal__episodes-container {
+            padding: 0 40px 40px 40px;
+        }
+
+        .modal__episodes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal__episodes-header h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .modal__season-select {
+            background-color: #242424;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: bold;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .modal__episodes-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .episode-item {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #404040;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .episode-item:hover {
+            background-color: #333;
+        }
+
+        .episode-number {
+            font-size: 1.5rem;
+            color: #d2d2d2;
+            width: 40px;
+            flex-shrink: 0;
+            text-align: center;
+        }
+
+        .episode-thumb-wrapper {
+            position: relative;
+            width: 140px;
+            flex-shrink: 0;
+            margin-right: 20px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .episode-thumb {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .episode-play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 36px;
+            height: 36px;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.2s;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid white;
+            border-radius: 50%;
+            padding: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .episode-item:hover .episode-play-icon {
+            opacity: 1;
+        }
+
+        .episode-details {
+            flex-grow: 1;
+        }
+
+        .episode-header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .episode-title {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .episode-duration {
+            font-size: 0.9rem;
+            color: #d2d2d2;
+        }
+
+        .episode-overview {
+            font-size: 0.85rem;
+            color: #a3a3a3;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .modal__episodes-container { padding: 0 20px 20px 20px; }
+            .episode-item { flex-direction: column; align-items: flex-start; padding: 15px 0; }
+            .episode-number { display: none; }
+            .episode-thumb-wrapper { width: 100%; margin-right: 0; margin-bottom: 10px; height: 180px; }
+            .episode-thumb { height: 100%; }
+        }
+
+        /* Shared Grid Style for Trailers and More Like This */
+        .modal__more-like-this {
+            padding: 0 40px 40px 40px;
+        }
+
+        .modal__more-like-this h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .modal__grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .modal__grid-item {
+            background-color: #2f2f2f;
+            border-radius: 5px;
+            overflow: hidden;
+            height: 140px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .modal__grid-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .modal__grid-item:hover img {
+            opacity: 1;
+        }
+
+        .modal__grid-movie-logo {
+            position: absolute;
+            bottom: 8%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            max-height: 40%;
+            object-fit: contain;
+            object-position: bottom center;
+            z-index: 2;
+            pointer-events: none;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.8));
+        }
+
+        .modal__trailer-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.8));
+            pointer-events: none;
+            width: 40px;
+            height: 40px;
+        }
+
+        /* Full Screen Video Player Modal Overlay */
+        .video-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            z-index: 200; /* Above the details modal */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .video-modal.hidden {
+            display: none !important;
+        }
+
+        .video-modal__close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 40px;
+            cursor: pointer;
+            z-index: 201;
+            font-weight: bold;
+            transition: color 0.2s;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .video-modal__close:hover {
+            color: #fff;
+        }
+
+        #video-player-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div id="nav" class="nav">
+        <div class="nav__left">
+            <img class="nav__logo" src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" alt="Netflix Logo" onclick="clearSearch()">
+            <ul class="nav__links">
+                <li class="active" onclick="clearSearch()">Home</li>
+                <li>Shows</li>
+                <li>Movies</li>
+                <li>New & Popular</li>
+                <li>My List</li>
+                <li>Browse by Languages</li>
+            </ul>
+        </div>
+        <div class="nav__right">
+            <!-- Expandable Search Bar -->
+            <div class="nav__search" id="nav__search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="search-icon">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="search-input" placeholder="Titles, people, genres">
+            </div>
+
+            <!-- Notifications Icon -->
+            <svg class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <img class="nav__avatar" src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png" alt="Avatar Logo">
+        </div>
+    </div>
+
+    <!-- MAIN VIEW (Hidden during search) -->
+    <div id="main-view">
+        <!-- Banner -->
+        <header id="banner" class="banner">
+            <div class="banner__contents">
+                <h1 id="banner__title" class="banner__title"></h1>
+                <div class="banner__buttons">
+                    <!-- Added ID to the banner play button -->
+                    <button id="banner__btn-play" class="banner__button">Play</button>
+                    <button class="banner__button">My List</button>
+                </div>
+                <h1 id="banner__description" class="banner__description"></h1>
+            </div>
+            <div class="banner--fadeBottom"></div>
+        </header>
+
+        <!-- Appending Rows Here via JS -->
+        <div id="rows-container"></div>
+    </div>
+
+    <!-- SEARCH VIEW (Hidden by default) -->
+    <div id="search-view" class="search-view hidden">
+        <h2 id="search-query-display">Explore titles related to: </h2>
+        <div class="search-grid" id="search-grid">
+            <!-- Search Results populated via JS -->
+        </div>
+    </div>
+
+    <!-- REDESIGNED Movie Details Modal -->
+    <div id="movie-modal" class="modal hidden">
+        <div class="modal__content">
+            <button class="modal__close">&times;</button>
+            
+            <div class="modal__hero">
+                <img id="modal__image" src="" alt="Movie Image">
+                <!-- Changed src to about:blank to prevent Chrome local file errors -->
+                <iframe id="modal__trailer-iframe" src="about:blank" class="hidden" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" frameborder="0"></iframe>
+                <div class="modal__hero-vignette"></div>
+                <div class="modal__hero-actions">
+                    <!-- Title or Title Logo gets injected here -->
+                    <h2 id="modal__title_overlay"></h2>
+                    
+                    <div class="modal__buttons">
+                        <button id="modal__btn-play" class="modal__btn-play">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> 
+                            Play
+                        </button>
+                        
+                        <!-- Extra Netflix Actions from Screenshot -->
+                        <button class="modal__btn-icon" title="Add to My List">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        </button>
+                        <button class="modal__btn-icon" title="Rate">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                        </button>
+
+                        <select id="server-select" class="modal__server-select">
+                            <option value="vidking">Server 1 (Vidking)</option>
+                            <option value="vidplus">Server 2 (Vidplus)</option>
+                        </select>
+
+                        <!-- Spacer to push mute button to the right end -->
+                        <div style="flex-grow: 1;"></div>
+                        
+                        <!-- Mute / Unmute Button -->
+                        <button id="modal__btn-mute" class="modal__btn-icon" style="margin-left: auto;">
+                            <!-- Default Muted SVG Icon -->
+                            <svg id="icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal__info-container">
+                <div class="modal__info-main">
+                    <div class="modal__metadata">
+                        <span id="modal__rating" class="rating"></span>
+                        <span id="modal__date"></span>
+                        <span>2h 15m</span> <!-- Mock Duration -->
+                        <span class="modal__hd">HD</span>
+                    </div>
+                    <div class="modal__maturity">
+                        <span class="modal__maturity-badge">A</span>
+                        <span class="modal__maturity-desc">violence, gore, tobacco use</span>
+                    </div>
+                    <h3 class="modal__subtitle">Watch in Multiple Languages</h3>
+                    <p id="modal__description"></p>
+                </div>
+                
+                <div class="modal__info-sidebar">
+                    <p><span class="sidebar-label">Cast:</span> <span id="modal__cast">Loading...</span></p>
+                    <p><span class="sidebar-label">Genres:</span> <span id="modal__genres">Loading...</span></p>
+                    <p><span class="sidebar-label" id="modal__crew-label">Director:</span> <span id="modal__crew">Loading...</span></p>
+                </div>
+            </div>
+
+            <!-- New Episodes Section (TV Shows Only) -->
+            <div class="modal__episodes-container" id="modal__episodes-container" style="display: none;">
+                <div class="modal__episodes-header">
+                    <h3>Episodes</h3>
+                    <select id="modal__season-select" class="modal__season-select"></select>
+                </div>
+                <div class="modal__episodes-list" id="modal__episodes-list">
+                    <!-- Episodes populated via JS -->
+                </div>
+            </div>
+
+            <!-- New Trailers & Clips Section -->
+            <div class="modal__more-like-this" id="modal__trailers-container" style="display: none;">
+                <h3>Trailers & Clips</h3>
+                <div class="modal__grid" id="modal__trailers-grid">
+                    <!-- Populated via JS with TMDB YouTube links -->
+                </div>
+            </div>
+
+            <div class="modal__more-like-this">
+                <h3>More Like This</h3>
+                <div class="modal__grid" id="modal__more-grid">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full Screen Video Player Modal overlay -->
+    <div id="video-player-modal" class="video-modal hidden">
+        <span class="video-modal__close">&times;</span>
+        <!-- Changed src to about:blank to prevent Chrome local file errors -->
+        <iframe id="video-player-iframe" src="about:blank" width="100%" height="100%" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+
+    <script>
+        // DOM Elements
+        const nav = document.getElementById("nav");
+        const banner = document.getElementById("banner");
+        const bannerTitle = document.getElementById("banner__title");
+        const bannerDesc = document.getElementById("banner__description");
+        const bannerPlayBtn = document.getElementById("banner__btn-play");
+        const rowsContainer = document.getElementById("rows-container");
+        
+        // Search Elements
+        const searchIcon = document.getElementById("search-icon");
+        const searchInput = document.getElementById("search-input");
+        const searchContainer = document.getElementById("nav__search");
+        const mainView = document.getElementById("main-view");
+        const searchView = document.getElementById("search-view");
+        const searchGrid = document.getElementById("search-grid");
+        const searchQueryDisplay = document.getElementById("search-query-display");
+
+        // Modal Elements
+        const modal = document.getElementById("movie-modal");
+        const closeModalBtn = document.querySelector(".modal__close");
+        const modalPlayBtn = document.getElementById("modal__btn-play");
+        const modalTitleOverlay = document.getElementById("modal__title_overlay");
+        const modalDesc = document.getElementById("modal__description");
+        const modalImg = document.getElementById("modal__image");
+        const modalRating = document.getElementById("modal__rating");
+        const modalDate = document.getElementById("modal__date");
+        const modalMoreGrid = document.getElementById("modal__more-grid");
+        const serverSelect = document.getElementById("server-select");
+        const modalTrailerIframe = document.getElementById("modal__trailer-iframe");
+        const modalMuteBtn = document.getElementById("modal__btn-mute");
+        
+        // TV Show Episodes Elements
+        const modalEpisodesContainer = document.getElementById("modal__episodes-container");
+        const modalSeasonSelect = document.getElementById("modal__season-select");
+        const modalEpisodesList = document.getElementById("modal__episodes-list");
+
+        // Trailers section in Modal
+        const modalTrailersContainer = document.getElementById("modal__trailers-container");
+        const modalTrailersGrid = document.getElementById("modal__trailers-grid");
+
+        // Sidebar Dynamic Elements
+        const modalCast = document.getElementById("modal__cast");
+        const modalGenres = document.getElementById("modal__genres");
+        const modalCrew = document.getElementById("modal__crew");
+        const modalCrewLabel = document.getElementById("modal__crew-label");
+
+        // Video Player Elements
+        const videoModal = document.getElementById("video-player-modal");
+        const videoIframe = document.getElementById("video-player-iframe");
+        const closeVideoBtn = document.querySelector(".video-modal__close");
+
+        // State for tracking the currently selected movie/show in MODAL
+        let currentMovieId = null;
+        let currentMovieType = "movie"; // defaults to movie
+        let currentMovieTrailerKey = null; // Saves main trailer for play button
+        let isTrailerMuted = true; // State for the background trailer mute toggle
+
+        // State for tracking the currently selected movie/show in BANNER
+        let currentBannerMovieId = null;
+        let currentBannerMovieType = "tv"; 
+        let currentBannerTrailerKey = null;
+
+        // !!! REPLACE THIS WITH YOUR TMDB API KEY !!!
+        const API_KEY = "ef311eb0b9b07b9c73e9fb0a732cc150"; 
+        
+        const BASE_URL = "https://api.themoviedb.org/3";
+        const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
+        const IMAGE_BASE_URL_SMALL = "https://image.tmdb.org/t/p/w500"; // For smaller grid images/logos
+
+        // Helper dates for "Now Playing" endpoints
+        const todayDate = new Date().toISOString().split('T')[0];
+        const lastMonthDate = new Date(Date.now() - 45*24*60*60*1000).toISOString().split('T')[0];
+
+        // API Endpoints
+        const requests = {
+            fetchTrending: `/trending/all/week?api_key=${API_KEY}&language=en-US`,
+            fetchTop10Movies: `/trending/movie/day?api_key=${API_KEY}`,
+            fetchTop10Shows: `/trending/tv/day?api_key=${API_KEY}`,
+            fetchNetflixOriginals: `/discover/tv?api_key=${API_KEY}&with_networks=213`,
+            fetchTopRated: `/movie/top_rated?api_key=${API_KEY}&language=en-US`,
+            fetchActionMovies: `/discover/movie?api_key=${API_KEY}&with_genres=28`,
+            fetchComedyMovies: `/discover/movie?api_key=${API_KEY}&with_genres=35`,
+            fetchHorrorMovies: `/discover/movie?api_key=${API_KEY}&with_genres=27`,
+            fetchTeluguMovies: `/discover/movie?api_key=${API_KEY}&with_original_language=te&primary_release_date.gte=${lastMonthDate}&primary_release_date.lte=${todayDate}&sort_by=popularity.desc`,
+        };
+
+        // 1. Handle Navbar Scroll Effect
+        window.addEventListener("scroll", () => {
+            if (window.scrollY > 100) {
+                nav.classList.add("nav__black");
+            } else {
+                nav.classList.remove("nav__black");
+            }
+        });
+
+        // Helper: Dynamic Full Screen Player Loader
+        function playFullscreenVideo(url, isYouTube) {
+            if (isYouTube) {
+                videoIframe.removeAttribute("sandbox");
+            } else {
+                // Strict sandbox for third-party streamers
+                videoIframe.setAttribute("sandbox", "allow-scripts allow-same-origin allow-forms allow-presentation");
+            }
+            videoIframe.src = url;
+            videoModal.classList.remove("hidden");
+            modalTrailerIframe.src = "about:blank"; // Pause background video
+        }
+
+        // 2. Search Logic
+        searchIcon.addEventListener("click", () => {
+            searchContainer.classList.toggle("active");
+            if(searchContainer.classList.contains("active")){
+                searchInput.focus();
+            }
+        });
+
+        let searchTimeout;
+        searchInput.addEventListener("input", (e) => {
+            const query = e.target.value;
+            clearTimeout(searchTimeout);
+            
+            searchTimeout = setTimeout(() => {
+                if (query.trim().length > 0) {
+                    performSearch(query);
+                } else {
+                    clearSearch();
+                }
+            }, 500); // Debounce
+        });
+
+        function clearSearch() {
+            searchInput.value = "";
+            searchContainer.classList.remove("active");
+            searchView.classList.add("hidden");
+            mainView.classList.remove("hidden");
+            searchGrid.innerHTML = "";
+            window.scrollTo(0, 0);
+        }
+
+        async function performSearch(query) {
+            searchQueryDisplay.innerText = `Explore titles related to: ${query}`;
+            mainView.classList.add("hidden");
+            searchView.classList.remove("hidden");
+            searchGrid.innerHTML = ""; // clear previous results
+
+            try {
+                const response = await fetch(`${BASE_URL}/search/multi?api_key=${API_KEY}&language=en-US&query=${encodeURIComponent(query)}&page=1&include_adult=false`);
+                const data = await response.json();
+                
+                // Filter out results that are people or have no images
+                const validResults = data.results.filter(item => 
+                    item.media_type !== "person" && (item.backdrop_path || item.poster_path)
+                );
+
+                if (validResults.length === 0) {
+                    searchGrid.innerHTML = "<p style='color: #777; grid-column: 1 / -1;'>No titles found. Try another search.</p>";
+                    return;
+                }
+
+                validResults.forEach(movie => {
+                    const actualMediaType = movie.media_type || "movie";
+                    
+                    const wrapper = document.createElement("div");
+                    wrapper.classList.add("row__poster-wrapper");
+                    wrapper.style.marginRight = "0"; // Override row margin for grid
+                    
+                    // Prioritize backdrop for search view, fallback to poster
+                    const imagePath = movie.backdrop_path || movie.poster_path;
+                    const img = document.createElement("img");
+                    img.classList.add("row__poster");
+                    img.style.maxHeight = "160px"; // Slightly taller for search view
+                    img.src = `${IMAGE_BASE_URL_SMALL}${imagePath}`;
+                    img.alt = movie.name || movie.title;
+                    
+                    wrapper.appendChild(img);
+                    searchGrid.appendChild(wrapper);
+
+                    // Fetch logo
+                    fetch(`${BASE_URL}/${actualMediaType}/${movie.id}/images?api_key=${API_KEY}`)
+                        .then(res => res.json())
+                        .then(imgData => {
+                            const logos = imgData.logos;
+                            if (logos && logos.length > 0) {
+                                const enLogo = logos.find(l => l.iso_639_1 === 'en') || logos[0];
+                                if (enLogo && enLogo.file_path) {
+                                    const logoImg = document.createElement("img");
+                                    logoImg.src = `${IMAGE_BASE_URL_SMALL}${enLogo.file_path}`;
+                                    logoImg.classList.add("row__movie-logo");
+                                    wrapper.appendChild(logoImg);
+                                }
+                            }
+                        })
+                        .catch(e => console.error("Search logo fetch error:", e));
+
+                    wrapper.addEventListener("click", () => openModal(movie, actualMediaType));
+                });
+            } catch (error) {
+                console.error("Error performing search:", error);
+            }
+        }
+
+
+        // 3. Fetch Data and Render Banner
+        async function buildBanner() {
+            try {
+                const response = await fetch(BASE_URL + requests.fetchNetflixOriginals);
+                const data = await response.json();
+                
+                // Pick a random tv show for the main hero
+                const randomMovie = data.results[Math.floor(Math.random() * data.results.length)];
+                const actualMediaType = randomMovie.media_type || "tv";
+                
+                // Save info so the banner Play button knows what to play
+                currentBannerMovieId = randomMovie.id;
+                currentBannerMovieType = actualMediaType;
+                
+                banner.style.backgroundImage = `url("${IMAGE_BASE_URL}${randomMovie.backdrop_path}")`;
+                
+                const titleText = randomMovie?.title || randomMovie?.name || randomMovie?.original_name || "Title Unavailable";
+                
+                // Fetch Trailer Key for Banner Play Button
+                fetch(`${BASE_URL}/${actualMediaType}/${randomMovie.id}/videos?api_key=${API_KEY}`)
+                    .then(res => res.json())
+                    .then(vData => {
+                        const trailer = vData.results?.find(v => v.site === 'YouTube' && v.type === 'Trailer') || vData.results?.find(v => v.site === 'YouTube');
+                        if (trailer) currentBannerTrailerKey = trailer.key;
+                    });
+
+                // Fetch the Title Logo for the Banner
+                try {
+                    const imgRes = await fetch(`${BASE_URL}/${actualMediaType}/${randomMovie.id}/images?api_key=${API_KEY}`);
+                    const imgData = await imgRes.json();
+                    const logos = imgData.logos;
+                    
+                    if (logos && logos.length > 0) {
+                        // Prioritize english logo, fallback to the first one available
+                        const enLogo = logos.find(l => l.iso_639_1 === 'en') || logos[0];
+                        const bannerLogo = document.createElement("img");
+                        bannerLogo.src = `${IMAGE_BASE_URL_SMALL}${enLogo.file_path}`;
+                        bannerLogo.classList.add("banner__logo");
+                        bannerTitle.innerHTML = ""; 
+                        bannerTitle.appendChild(bannerLogo);
+                    } else {
+                        bannerTitle.innerText = titleText;
+                    }
+                } catch(e) {
+                    bannerTitle.innerText = titleText;
+                }
+                
+                const truncate = (str, n) => str?.length > n ? str.substr(0, n - 1) + "..." : str;
+                bannerDesc.innerText = truncate(randomMovie?.overview, 150);
+
+            } catch (error) {
+                console.error("Error fetching banner data:", error);
+            }
+        }
+
+        // 4. Fetch Data and Render Rows
+        async function buildRow(title, fetchUrl, isLargeRow = false, defaultMediaType = "movie") {
+            try {
+                const response = await fetch(BASE_URL + fetchUrl);
+                const data = await response.json();
+                const movies = data.results;
+
+                // Create row container
+                const rowElement = document.createElement("div");
+                rowElement.classList.add("row");
+
+                // Create row title
+                const rowTitleElement = document.createElement("h2");
+                rowTitleElement.innerText = title;
+                rowElement.appendChild(rowTitleElement);
+
+                // Create wrapper for sliders and posters
+                const wrapperElement = document.createElement("div");
+                wrapperElement.classList.add("row__posters-wrapper");
+
+                // Slider Left Button
+                const leftBtn = document.createElement("button");
+                leftBtn.classList.add("row__slider-btn", "row__slider-btn--left");
+                leftBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><polyline points="15 18 9 12 15 6"></polyline></svg>';
+                wrapperElement.appendChild(leftBtn);
+
+                // Create posters container
+                const postersContainer = document.createElement("div");
+                postersContainer.classList.add("row__posters");
+
+                // Append images
+                movies.forEach(movie => {
+                    if ((isLargeRow && movie.poster_path) || (!isLargeRow && movie.backdrop_path)) {
+                        
+                        // We wrap the image in a container to overlay the logo!
+                        const wrapper = document.createElement("div");
+                        wrapper.classList.add("row__poster-wrapper");
+                        if (isLargeRow) {
+                            wrapper.classList.add("row__posterLarge-wrapper");
+                        }
+
+                        // The actual movie image
+                        const img = document.createElement("img");
+                        img.classList.add("row__poster");
+                        if (isLargeRow) {
+                            img.classList.add("row__posterLarge");
+                            img.src = `${IMAGE_BASE_URL}${movie.poster_path}`;
+                        } else {
+                            img.src = `${IMAGE_BASE_URL}${movie.backdrop_path}`;
+                        }
+                        img.alt = movie.name || movie.title;
+
+                        wrapper.appendChild(img);
+                        postersContainer.appendChild(wrapper);
+
+                        // Identify if tv or movie so we can fetch the logo correctly
+                        const actualMediaType = movie.media_type || defaultMediaType;
+
+                        // Fetch real movie logo for backdrops asynchronously
+                        if (!isLargeRow) {
+                            fetch(`${BASE_URL}/${actualMediaType}/${movie.id}/images?api_key=${API_KEY}`)
+                                .then(res => res.json())
+                                .then(imgData => {
+                                    const logos = imgData.logos;
+                                    if (logos && logos.length > 0) {
+                                        const enLogo = logos.find(l => l.iso_639_1 === 'en') || logos[0];
+                                        if (enLogo && enLogo.file_path) {
+                                            const logoImg = document.createElement("img");
+                                            logoImg.src = `${IMAGE_BASE_URL_SMALL}${enLogo.file_path}`;
+                                            logoImg.classList.add("row__movie-logo");
+                                            wrapper.appendChild(logoImg);
+                                        }
+                                    }
+                                })
+                                .catch(e => console.error("Logo fetch error:", e));
+                        }
+                        
+                        // Add click event to open modal
+                        wrapper.addEventListener("click", () => openModal(movie, actualMediaType));
+                    }
+                });
+
+                // Slider Right Button
+                const rightBtn = document.createElement("button");
+                rightBtn.classList.add("row__slider-btn", "row__slider-btn--right");
+                rightBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+                
+                // Horizontal scrolling events
+                leftBtn.addEventListener("click", () => {
+                    postersContainer.scrollBy({ left: -window.innerWidth / 1.5, behavior: 'smooth' });
+                });
+                
+                rightBtn.addEventListener("click", () => {
+                    postersContainer.scrollBy({ left: window.innerWidth / 1.5, behavior: 'smooth' });
+                });
+
+                wrapperElement.appendChild(postersContainer);
+                wrapperElement.appendChild(rightBtn);
+
+                rowElement.appendChild(wrapperElement);
+                rowsContainer.appendChild(rowElement);
+
+            } catch (error) {
+                console.error("Error fetching row data:", error);
+            }
+        }
+
+        // 4.5 Build Top 10 Row Logic
+        async function buildTop10Row(title, fetchUrl, mediaType) {
+            try {
+                const response = await fetch(BASE_URL + fetchUrl);
+                const data = await response.json();
+                // Get exactly top 10
+                const movies = data.results.slice(0, 10);
+
+                const rowElement = document.createElement("div");
+                rowElement.classList.add("row");
+
+                const rowTitleElement = document.createElement("h2");
+                rowTitleElement.innerText = title;
+                rowElement.appendChild(rowTitleElement);
+
+                // Create wrapper for sliders and posters
+                const wrapperElement = document.createElement("div");
+                wrapperElement.classList.add("row__posters-wrapper");
+
+                // Slider Left Button
+                const leftBtn = document.createElement("button");
+                leftBtn.classList.add("row__slider-btn", "row__slider-btn--left");
+                leftBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><polyline points="15 18 9 12 15 6"></polyline></svg>';
+                wrapperElement.appendChild(leftBtn);
+
+                const postersContainer = document.createElement("div");
+                postersContainer.classList.add("row__posters", "row__posters--top10");
+
+                movies.forEach((movie, index) => {
+                    if (movie.poster_path) {
+                        const item = document.createElement("div");
+                        item.classList.add("top10__item");
+
+                        // Giant Number element
+                        const number = document.createElement("span");
+                        number.classList.add("top10__number");
+                        number.innerText = index + 1;
+
+                        // Poster image element
+                        const img = document.createElement("img");
+                        img.classList.add("top10__poster");
+                        img.src = `${IMAGE_BASE_URL_SMALL}${movie.poster_path}`;
+                        img.alt = movie.name || movie.title;
+
+                        item.appendChild(number);
+                        item.appendChild(img);
+
+                        // Add click event to open modal
+                        item.addEventListener("click", () => openModal(movie, mediaType));
+                        postersContainer.appendChild(item);
+                    }
+                });
+
+                // Slider Right Button
+                const rightBtn = document.createElement("button");
+                rightBtn.classList.add("row__slider-btn", "row__slider-btn--right");
+                rightBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+                
+                // Horizontal scrolling events
+                leftBtn.addEventListener("click", () => {
+                    postersContainer.scrollBy({ left: -window.innerWidth / 1.5, behavior: 'smooth' });
+                });
+                
+                rightBtn.addEventListener("click", () => {
+                    postersContainer.scrollBy({ left: window.innerWidth / 1.5, behavior: 'smooth' });
+                });
+
+                wrapperElement.appendChild(postersContainer);
+                wrapperElement.appendChild(rightBtn);
+
+                rowElement.appendChild(wrapperElement);
+                rowsContainer.appendChild(rowElement);
+
+            } catch (error) {
+                console.error("Error fetching Top 10 data:", error);
+            }
+        }
+
+        // Fetch Episodes for a given season and populate the list
+        async function loadSeasonEpisodes(tvId, seasonNumber) {
+            modalEpisodesList.innerHTML = "<p style='color: #888; padding: 20px;'>Loading episodes...</p>";
+            try {
+                const res = await fetch(`${BASE_URL}/tv/${tvId}/season/${seasonNumber}?api_key=${API_KEY}`);
+                const data = await res.json();
+                
+                modalEpisodesList.innerHTML = "";
+                
+                if(data.episodes && data.episodes.length > 0) {
+                    data.episodes.forEach(ep => {
+                        const item = document.createElement("div");
+                        item.classList.add("episode-item");
+                        
+                        const thumbPath = ep.still_path ? `${IMAGE_BASE_URL_SMALL}${ep.still_path}` : "https://via.placeholder.com/300x170?text=No+Image";
+                        
+                        item.innerHTML = `
+                            <div class="episode-number">${ep.episode_number}</div>
+                            <div class="episode-thumb-wrapper">
+                                <img src="${thumbPath}" class="episode-thumb" alt="${ep.name}">
+                                <div class="episode-play-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                                </div>
+                            </div>
+                            <div class="episode-details">
+                                <div class="episode-header-info">
+                                    <span class="episode-title">${ep.name}</span>
+                                    <span class="episode-duration">${ep.runtime ? ep.runtime + 'm' : ''}</span>
+                                </div>
+                                <p class="episode-overview">${ep.overview || 'No description available.'}</p>
+                            </div>
+                        `;
+                        
+                        // Click to play the specific episode!
+                        item.addEventListener("click", () => {
+                            const serverChoice = serverSelect.value;
+                            let embedUrl = "";
+                            
+                            if (serverChoice === "vidking" || serverChoice === "tmdb") {
+                                // Default to vidking for episode streaming
+                                embedUrl = `https://www.vidking.net/embed/tv/${tvId}/${seasonNumber}/${ep.episode_number}?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true`;
+                                playFullscreenVideo(embedUrl, false);
+                            } else if (serverChoice === "vidplus") {
+                                embedUrl = `https://player.vidplus.to/embed/tv/${tvId}/${seasonNumber}/${ep.episode_number}`;
+                                playFullscreenVideo(embedUrl, false);
+                            }
+                        });
+                        
+                        modalEpisodesList.appendChild(item);
+                    });
+                } else {
+                    modalEpisodesList.innerHTML = "<p style='color: #888; padding: 20px;'>No episodes found for this season.</p>";
+                }
+            } catch(err) {
+                console.error("Error fetching season episodes:", err);
+                modalEpisodesList.innerHTML = "<p style='color: #888; padding: 20px;'>Failed to load episodes.</p>";
+            }
+        }
+
+        // Listener for Season Dropdown Change
+        modalSeasonSelect.addEventListener("change", (e) => {
+            if (currentMovieId && currentMovieType === 'tv') {
+                loadSeasonEpisodes(currentMovieId, e.target.value);
+            }
+        });
+
+        // 5. Modal Logic
+        function openModal(movie, mediaType) {
+            currentMovieId = movie.id;
+            currentMovieTrailerKey = null; // Reset trailer key
+            isTrailerMuted = true; // Always start muted
+            updateMuteButtonIcon();
+            
+            // Set the correct media type for iframe routing
+            if (mediaType) {
+                currentMovieType = mediaType;
+            } else if (movie.media_type) {
+                currentMovieType = movie.media_type;
+            } else if (movie.first_air_date || (movie.name && !movie.title)) {
+                currentMovieType = "tv"; 
+            } else {
+                currentMovieType = "movie";
+            }
+
+            // Temporarily set the text title
+            const titleText = movie?.title || movie?.name || movie?.original_name || "Title Unavailable";
+            modalTitleOverlay.innerHTML = titleText;
+            
+            // Set basic details immediately
+            modalDesc.innerText = movie?.overview || "No description available.";
+            
+            // Prefer backdrop, fallback to poster
+            const imagePath = movie.backdrop_path || movie.poster_path;
+            modalImg.src = imagePath ? `${IMAGE_BASE_URL}${imagePath}` : "";
+            
+            // Create a fake percentage match based on TMDB's vote average
+            const rating = movie.vote_average ? (movie.vote_average * 10).toFixed(0) : 0;
+            modalRating.innerText = rating > 0 ? `${rating}% Match` : "98% Match";
+            
+            const rawDate = movie.release_date || movie.first_air_date || "";
+            modalDate.innerText = rawDate ? rawDate.substring(0, 4) : "2024";
+
+            // Reset dynamic fields & trailer
+            modalCast.innerText = "Loading...";
+            modalGenres.innerText = "Loading...";
+            modalCrew.innerText = "Loading...";
+            modalTrailerIframe.src = "about:blank"; // Prevents Chrome local file errors
+            modalTrailerIframe.classList.add("hidden");
+            modalEpisodesContainer.style.display = "none";
+
+            // Attempt to Fetch Logo for the Modal overlay
+            fetch(`${BASE_URL}/${currentMovieType}/${movie.id}/images?api_key=${API_KEY}`)
+                .then(res => res.json())
+                .then(imgData => {
+                    const logos = imgData.logos;
+                    if (logos && logos.length > 0) {
+                        const enLogo = logos.find(l => l.iso_639_1 === 'en') || logos[0];
+                        const modalLogo = document.createElement("img");
+                        modalLogo.src = `${IMAGE_BASE_URL_SMALL}${enLogo.file_path}`;
+                        modalLogo.classList.add("modal__hero-logo");
+                        modalTitleOverlay.innerHTML = "";
+                        modalTitleOverlay.appendChild(modalLogo);
+                    }
+                })
+                .catch(e => console.error("Error fetching modal logo:", e));
+
+            // Fetch detailed cast, crew, genres and seasons
+            fetch(`${BASE_URL}/${currentMovieType}/${movie.id}?api_key=${API_KEY}&append_to_response=credits`)
+                .then(res => res.json())
+                .then(data => {
+                    // Update Genres
+                    if (data.genres && data.genres.length > 0) {
+                        modalGenres.innerText = data.genres.map(g => g.name).join(", ");
+                    } else {
+                        modalGenres.innerText = "Not Available";
+                    }
+
+                    // Update Cast (Top 5)
+                    if (data.credits && data.credits.cast && data.credits.cast.length > 0) {
+                        const topCast = data.credits.cast.slice(0, 5).map(c => c.name);
+                        modalCast.innerHTML = topCast.join(", ") + (data.credits.cast.length > 5 ? ", <i>more</i>" : "");
+                    } else {
+                        modalCast.innerText = "Not Available";
+                    }
+
+                    // Update Crew (Director for Movies, Creator for TV)
+                    if (currentMovieType === "movie") {
+                        const directors = data.credits?.crew?.filter(c => c.job === "Director");
+                        modalCrewLabel.innerText = "Director:";
+                        modalCrew.innerText = directors?.length > 0 ? directors.map(d => d.name).join(", ") : "Not Available";
+                    } else {
+                        const creators = data.created_by;
+                        modalCrewLabel.innerText = "Creator:";
+                        modalCrew.innerText = creators?.length > 0 ? creators.map(c => c.name).join(", ") : "Not Available";
+                    }
+                    
+                    // Load Seasons and Episodes if TV Show
+                    if (currentMovieType === "tv" && data.seasons && data.seasons.length > 0) {
+                        // Filter out 'Specials' (usually Season 0) to match standard Netflix flow
+                        const validSeasons = data.seasons.filter(s => s.season_number > 0);
+                        if (validSeasons.length > 0) {
+                            modalEpisodesContainer.style.display = "block";
+                            modalSeasonSelect.innerHTML = "";
+                            
+                            validSeasons.forEach(s => {
+                                const opt = document.createElement("option");
+                                opt.value = s.season_number;
+                                opt.innerText = `${s.name} (${s.episode_count} Episodes)`;
+                                modalSeasonSelect.appendChild(opt);
+                            });
+                            
+                            // Load first valid season by default
+                            loadSeasonEpisodes(movie.id, validSeasons[0].season_number);
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.error("Error fetching detailed info:", err);
+                    modalCast.innerText = "Unavailable";
+                    modalGenres.innerText = "Unavailable";
+                    modalCrew.innerText = "Unavailable";
+                });
+
+            // Fetch Trailers and Videos from TMDB API
+            fetch(`${BASE_URL}/${currentMovieType}/${movie.id}/videos?api_key=${API_KEY}`)
+                .then(res => res.json())
+                .then(videoData => {
+                    if (videoData.results && videoData.results.length > 0) {
+                        
+                        // 1. Play the best trailer in the background hero
+                        const trailer = videoData.results.find(v => v.site === 'YouTube' && v.type === 'Trailer') || videoData.results.find(v => v.site === 'YouTube');
+                        if (trailer) {
+                            currentMovieTrailerKey = trailer.key;
+                            modalTrailerIframe.src = `https://www.youtube-nocookie.com/embed/${trailer.key}?autoplay=1&mute=1&controls=0&playsinline=1&modestbranding=1&loop=1&playlist=${trailer.key}`;
+                            modalTrailerIframe.classList.remove("hidden");
+                        }
+
+                        // 2. Populate the "Trailers & Clips" grid section
+                        const youtubeVideos = videoData.results.filter(v => v.site === 'YouTube').slice(0, 6);
+                        if (youtubeVideos.length > 0) {
+                            modalTrailersContainer.style.display = "block";
+                            modalTrailersGrid.innerHTML = ""; // Clear existing
+
+                            youtubeVideos.forEach(vid => {
+                                const gridItem = document.createElement('div');
+                                gridItem.classList.add('modal__grid-item');
+                                
+                                const img = document.createElement('img');
+                                img.src = `https://img.youtube.com/vi/${vid.key}/hqdefault.jpg`;
+                                img.alt = vid.name;
+                                
+                                // Overlay Play Icon
+                                const playIcon = document.createElement('div');
+                                playIcon.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+                                playIcon.classList.add('modal__trailer-icon');
+
+                                gridItem.appendChild(img);
+                                gridItem.appendChild(playIcon);
+
+                                // On Click, play the trailer with sound in the main video player overlay
+                                gridItem.addEventListener('click', () => {
+                                    playFullscreenVideo(`https://www.youtube-nocookie.com/embed/${vid.key}?autoplay=1&rel=0`, true);
+                                });
+
+                                modalTrailersGrid.appendChild(gridItem);
+                            });
+                        } else {
+                            modalTrailersContainer.style.display = "none";
+                        }
+                    } else {
+                        modalTrailersContainer.style.display = "none";
+                    }
+                })
+                .catch(err => console.error("Error fetching trailer:", err));
+
+            // Mocking "More Like This"
+            populateMockMoreLikeThis();
+
+            // Show the modal and prevent body scroll
+            modal.classList.remove("hidden");
+            document.body.style.overflow = "hidden";
+        }
+
+        // Handle Background Trailer Mute Toggle
+        function updateMuteButtonIcon() {
+            modalMuteBtn.innerHTML = isTrailerMuted 
+                ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>' 
+                : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
+        }
+
+        modalMuteBtn.addEventListener("click", () => {
+            isTrailerMuted = !isTrailerMuted;
+            updateMuteButtonIcon();
+            if (currentMovieTrailerKey) {
+                // Reload the iframe with the new mute state (0 or 1)
+                modalTrailerIframe.src = `https://www.youtube-nocookie.com/embed/${currentMovieTrailerKey}?autoplay=1&mute=${isTrailerMuted ? '1' : '0'}&controls=0&playsinline=1&modestbranding=1&loop=1&playlist=${currentMovieTrailerKey}`;
+            }
+        });
+
+        // Helper to grab random posters and their logos currently on screen
+        function populateMockMoreLikeThis() {
+            modalMoreGrid.innerHTML = "";
+            
+            // Querying the actual images inside the wrappers
+            const allPosters = document.querySelectorAll('.row__poster:not(.row__posterLarge)');
+            if(allPosters.length === 0) return;
+
+            // Pick 6 random posters
+            for(let i=0; i<6; i++) {
+                const randomIdx = Math.floor(Math.random() * allPosters.length);
+                const sourceImg = allPosters[randomIdx];
+                const sourceWrapper = sourceImg.parentElement;
+                
+                const gridItem = document.createElement('div');
+                gridItem.classList.add('modal__grid-item');
+                
+                const img = document.createElement('img');
+                img.src = sourceImg.src;
+                gridItem.appendChild(img);
+
+                // Clone the movie logo if it successfully loaded in the row earlier
+                const existingLogo = sourceWrapper.querySelector(".row__movie-logo");
+                if (existingLogo) {
+                    const logoImg = document.createElement('img');
+                    logoImg.src = existingLogo.src;
+                    logoImg.classList.add("modal__grid-movie-logo");
+                    gridItem.appendChild(logoImg);
+                }
+                
+                modalMoreGrid.appendChild(gridItem);
+            }
+        }
+
+        // Handle Play button click inside Details Modal
+        modalPlayBtn.addEventListener("click", () => {
+            if (currentMovieId) {
+                let embedUrl = "";
+                const serverChoice = serverSelect.value;
+                
+                // Route to TMDB YouTube Trailer or the Streaming Servers
+                if (serverChoice === "tmdb") {
+                    if (currentMovieTrailerKey) {
+                        embedUrl = `https://www.youtube-nocookie.com/embed/${currentMovieTrailerKey}?autoplay=1`;
+                        playFullscreenVideo(embedUrl, true);
+                    } else {
+                        alert("Official trailer not found for this title.");
+                        return;
+                    }
+                } else if (serverChoice === "vidking") {
+                    if (currentMovieType === "tv") {
+                        embedUrl = `https://www.vidking.net/embed/tv/${currentMovieId}/1/1?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true`;
+                    } else {
+                        embedUrl = `https://www.vidking.net/embed/movie/${currentMovieId}`;
+                    }
+                    playFullscreenVideo(embedUrl, false);
+                } else if (serverChoice === "vidplus") {
+                    if (currentMovieType === "tv") {
+                        embedUrl = `https://player.vidplus.to/embed/tv/${currentMovieId}/1/1`;
+                    } else {
+                        embedUrl = `https://player.vidplus.to/embed/movie/${currentMovieId}`;
+                    }
+                    playFullscreenVideo(embedUrl, false);
+                }
+            }
+        });
+
+        // Handle Play button click on the main Banner
+        bannerPlayBtn.addEventListener("click", () => {
+            if (currentBannerMovieId) {
+                let embedUrl = "";
+                const serverChoice = serverSelect.value; 
+                
+                if (serverChoice === "tmdb") {
+                    if (currentBannerTrailerKey) {
+                        embedUrl = `https://www.youtube-nocookie.com/embed/${currentBannerTrailerKey}?autoplay=1`;
+                        playFullscreenVideo(embedUrl, true);
+                    } else {
+                        alert("Official trailer not found for this title.");
+                        return;
+                    }
+                } else if (serverChoice === "vidking") {
+                    if (currentBannerMovieType === "tv") {
+                        embedUrl = `https://www.vidking.net/embed/tv/${currentBannerMovieId}/1/1?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true`;
+                    } else {
+                        embedUrl = `https://www.vidking.net/embed/movie/${currentBannerMovieId}`;
+                    }
+                    playFullscreenVideo(embedUrl, false);
+                } else if (serverChoice === "vidplus") {
+                    if (currentBannerMovieType === "tv") {
+                        embedUrl = `https://player.vidplus.to/embed/tv/${currentBannerMovieId}/1/1`;
+                    } else {
+                        embedUrl = `https://player.vidplus.to/embed/movie/${currentBannerMovieId}`;
+                    }
+                    playFullscreenVideo(embedUrl, false);
+                }
+            }
+        });
+
+        // Close the Video Player Modal
+        closeVideoBtn.addEventListener("click", () => {
+            videoModal.classList.add("hidden");
+            videoIframe.src = "about:blank"; // Clear src to stop video/audio from playing in background
+        });
+
+        // Close Details Modal via the "X" button
+        closeModalBtn.addEventListener("click", () => {
+            modal.classList.add("hidden");
+            document.body.style.overflow = "auto";
+            modalTrailerIframe.src = "about:blank"; // Stop background trailer
+        });
+
+        // Close Details Modal by clicking the dark background outside the content box
+        modal.addEventListener("click", (e) => {
+            if (e.target.id === "movie-modal") {
+                modal.classList.add("hidden");
+                document.body.style.overflow = "auto";
+                modalTrailerIframe.src = "about:blank"; // Stop background trailer
+            }
+        });
+
+        // Initialization
+        buildBanner();
+        // Passing default mediaType guarantees the correct TMDB /images API endpoint routes
+        buildTop10Row("Top 10 Shows in India Today", requests.fetchTop10Shows, "tv");
+        buildTop10Row("Top 10 Movies in India Today", requests.fetchTop10Movies, "movie");
+        buildRow("NETFLIX ORIGINALS", requests.fetchNetflixOriginals, true, "tv");
+        buildRow("Trending Now", requests.fetchTrending, false, "movie");
+        buildRow("Now Playing Telugu Movies", requests.fetchTeluguMovies, false, "movie"); // Updated Title
+        buildRow("Top Rated", requests.fetchTopRated, false, "movie");
+        buildRow("Action Movies", requests.fetchActionMovies, false, "movie");
+        buildRow("Comedy Movies", requests.fetchComedyMovies, false, "movie");
+        buildRow("Horror Movies", requests.fetchHorrorMovies, false, "movie");
+
+    </script>
+</body>
+</html>
