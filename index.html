@@ -292,6 +292,13 @@
             border-bottom-left-radius: 4px;
         }
 
+        /* Hide buttons on mobile where touch scroll is native */
+        @media (max-width: 768px) {
+            .row__slider-btn {
+                display: none;
+            }
+        }
+
         .row__poster-wrapper {
             position: relative;
             margin-right: 10px;
@@ -370,6 +377,18 @@
             z-index: 2;
             box-shadow: -4px 0px 15px rgba(0,0,0,0.6);
             transition: opacity 0.2s, height 0.3s;
+        }
+
+        @media (min-width: 768px) {
+            .top10__poster {
+                height: 220px;
+            }
+            .top10__number {
+                font-size: 240px;
+                margin-right: -45px;
+                -webkit-text-stroke: 4px #595959;
+                letter-spacing: -12px;
+            }
         }
 
         .row__movie-logo {
@@ -973,26 +992,72 @@
             .search-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; row-gap: 25px; }
             .search-grid .row__poster { max-height: 100px; }
 
-            /* Modal Immersive View */
-            .modal { padding-top: 0; align-items: flex-end; }
-            .modal__content { 
-                width: 100%; 
-                border-radius: 12px 12px 0 0; 
-                margin-bottom: 0; 
-                min-height: 95vh; 
+            /* Modal Fullscreen View (Mobile Fix) */
+            .modal { 
+                padding-top: 0; 
+                align-items: flex-start; /* Align top */
+                background-color: #181818; /* Solid background, no transparency */
             }
-            .modal.hidden .modal__content { transform: scale(1) translateY(100%); }
+            .modal__content { 
+                width: 100vw; 
+                min-height: 100vh;
+                border-radius: 0; 
+                margin-bottom: 0; 
+                box-shadow: none;
+                background-color: #181818; 
+                transform: translateX(0); /* Final state */
+                transition: transform 0.3s ease-in-out;
+            }
+            .modal.hidden .modal__content { 
+                transform: translateX(100vw); /* Slide in from right like a native app page */
+            }
             
-            .modal__hero { height: 30vh; min-height: 250px; }
-            .modal__hero-actions { left: 20px; right: 20px; bottom: 20px; gap: 10px; }
-            .modal__hero-logo { max-width: 200px; max-height: 80px; }
-            .modal__buttons { gap: 8px; }
-            .modal__btn-play { padding: 0.5rem 1.2rem; font-size: 1rem; }
-            .modal__btn-icon { width: 36px; height: 36px; }
-            .modal__btn-icon svg { width: 16px; height: 16px; }
-            .modal__server-select { padding: 0.5rem; font-size: 0.85rem; }
+            .modal__close { 
+                position: fixed; /* Keeps close button at top right even when scrolling */
+                top: 15px; 
+                right: 15px; 
+                background: rgba(0, 0, 0, 0.6); 
+                z-index: 1000;
+            }
+            
+            /* Adjust hero video/image height for full screen */
+            .modal__hero { 
+                height: auto; 
+                min-height: 56.25vw; /* 16:9 aspect ratio based on width */
+                overflow: hidden; 
+            }
+            #modal__image, #modal__trailer-iframe { 
+                position: absolute; 
+                top: 0; left: 0; right: 0; 
+                width: 100%; height: 56.25vw; 
+                transform: scale(1.15); 
+            }
+            .modal__hero-vignette { 
+                position: absolute; 
+                top: 0; left: 0; width: 100%; height: 56.25vw; 
+                background: linear-gradient(to top, #181818 5%, transparent 50%); 
+            }
+            
+            /* Push actions strictly below the main part of the video */
+            .modal__hero-actions { 
+                position: relative; 
+                margin-top: 40vw; /* Adjust to sit below the video */
+                bottom: auto; left: auto; right: auto; 
+                padding: 20px; 
+                background: linear-gradient(to top, #181818 85%, transparent 100%); 
+            }
+            
+            .modal__hero-logo { max-width: 200px; max-height: 80px; margin-bottom: 15px; }
+            
+            /* Netflix Mobile Buttons Layout */
+            .modal__buttons { display: flex; flex-wrap: wrap; gap: 10px; }
+            .modal__btn-play { width: 100%; justify-content: center; order: 1; }
+            .modal__btn-icon[title="Add to My List"] { order: 2; }
+            .modal__btn-icon[title="Rate"] { order: 3; }
+            #modal__btn-mute { order: 4; margin-left: auto; }
+            .modal__server-select { width: 100%; order: 5; margin-top: 5px; padding: 0.8rem; }
 
-            .modal__info-container { grid-template-columns: 1fr; padding: 20px; gap: 1.5rem; }
+            .modal__info-container { grid-template-columns: 1fr; padding: 0 20px 20px 20px; gap: 1.5rem; }
             .modal__episodes-container { padding: 0 20px 20px 20px; }
             .modal__more-like-this { padding: 0 20px 20px 20px; }
             .modal__grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
@@ -1010,8 +1075,6 @@
             .banner__title { font-size: 1.8rem; }
             .row__poster { max-height: 90px; }
             .row__posterLarge { max-height: 160px; }
-            .modal__btn-play { width: 100%; justify-content: center; margin-bottom: 5px; } /* Full width play button on very small screens */
-            .modal__server-select { flex-grow: 1; }
             .top10__number { font-size: 110px; }
         }
     </style>
@@ -1057,6 +1120,7 @@
             <div class="banner__contents">
                 <h1 id="banner__title" class="banner__title"></h1>
                 <div class="banner__buttons">
+                    <!-- Added ID to the banner play button -->
                     <button id="banner__btn-play" class="banner__button">Play</button>
                     <button class="banner__button">My List</button>
                 </div>
@@ -1084,6 +1148,7 @@
             
             <div class="modal__hero">
                 <img id="modal__image" src="" alt="Movie Image">
+                <!-- Changed src to about:blank to prevent Chrome local file errors -->
                 <iframe id="modal__trailer-iframe" src="about:blank" class="hidden" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" frameborder="0"></iframe>
                 <div class="modal__hero-vignette"></div>
                 <div class="modal__hero-actions">
@@ -1096,6 +1161,7 @@
                             Play
                         </button>
                         
+                        <!-- Extra Netflix Actions from Screenshot -->
                         <button class="modal__btn-icon" title="Add to My List">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                         </button>
@@ -1174,6 +1240,7 @@
     <!-- Full Screen Video Player Modal overlay -->
     <div id="video-player-modal" class="video-modal hidden">
         <span class="video-modal__close">&times;</span>
+        <!-- Changed src to about:blank to prevent Chrome local file errors -->
         <iframe id="video-player-iframe" src="about:blank" width="100%" height="100%" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
 
@@ -1345,6 +1412,7 @@
                     const imagePath = movie.backdrop_path || movie.poster_path;
                     const img = document.createElement("img");
                     img.classList.add("row__poster");
+                    img.style.maxHeight = "160px"; // Slightly taller for search view
                     img.src = `${IMAGE_BASE_URL_SMALL}${imagePath}`;
                     img.alt = movie.name || movie.title;
                     
@@ -1614,7 +1682,7 @@
                             const serverChoice = serverSelect.value;
                             let embedUrl = "";
                             
-                            if (serverChoice === "vidking" || serverChoice === "tmdb") {
+                            if (serverChoice === "vidking") {
                                 embedUrl = `https://www.vidking.net/embed/tv/${tvId}/${seasonNumber}/${ep.episode_number}?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true`;
                                 playFullscreenVideo(embedUrl, false);
                             } else if (serverChoice === "vidplus") {
@@ -1792,6 +1860,9 @@
 
             populateMockMoreLikeThis();
 
+            // Scroll modal to top
+            modal.scrollTo(0, 0);
+
             modal.classList.remove("hidden");
             document.body.style.overflow = "hidden";
         }
@@ -1841,22 +1912,17 @@
 
         modalPlayBtn.addEventListener("click", () => {
             if (currentMovieId) {
-                let embedUrl = "";
                 const serverChoice = serverSelect.value;
-                
-                if (serverChoice === "vidking" || serverChoice === "tmdb") {
-                    if (currentMovieType === "tv") {
-                        embedUrl = `https://www.vidking.net/embed/tv/${currentMovieId}/1/1?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true`;
-                    } else {
-                        embedUrl = `https://www.vidking.net/embed/movie/${currentMovieId}`;
-                    }
+
+                if (serverChoice === "vidking") {
+                    let embedUrl = currentMovieType === "tv" 
+                        ? `https://www.vidking.net/embed/tv/${currentMovieId}/1/1?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true`
+                        : `https://www.vidking.net/embed/movie/${currentMovieId}`;
                     playFullscreenVideo(embedUrl, false);
                 } else if (serverChoice === "vidplus") {
-                    if (currentMovieType === "tv") {
-                        embedUrl = `https://player.vidplus.to/embed/tv/${currentMovieId}/1/1`;
-                    } else {
-                        embedUrl = `https://player.vidplus.to/embed/movie/${currentMovieId}`;
-                    }
+                    let embedUrl = currentMovieType === "tv"
+                        ? `https://player.vidplus.to/embed/tv/${currentMovieId}/1/1`
+                        : `https://player.vidplus.to/embed/movie/${currentMovieId}`;
                     playFullscreenVideo(embedUrl, false);
                 }
             }
@@ -1864,22 +1930,17 @@
 
         bannerPlayBtn.addEventListener("click", () => {
             if (currentBannerMovieId) {
-                let embedUrl = "";
                 const serverChoice = serverSelect.value; 
-                
-                if (serverChoice === "vidking" || serverChoice === "tmdb") {
-                    if (currentBannerMovieType === "tv") {
-                        embedUrl = `https://www.vidking.net/embed/tv/${currentBannerMovieId}/1/1?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true`;
-                    } else {
-                        embedUrl = `https://www.vidking.net/embed/movie/${currentBannerMovieId}`;
-                    }
+
+                if (serverChoice === "vidking") {
+                    let embedUrl = currentBannerMovieType === "tv" 
+                        ? `https://www.vidking.net/embed/tv/${currentBannerMovieId}/1/1?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true`
+                        : `https://www.vidking.net/embed/movie/${currentBannerMovieId}`;
                     playFullscreenVideo(embedUrl, false);
                 } else if (serverChoice === "vidplus") {
-                    if (currentBannerMovieType === "tv") {
-                        embedUrl = `https://player.vidplus.to/embed/tv/${currentBannerMovieId}/1/1`;
-                    } else {
-                        embedUrl = `https://player.vidplus.to/embed/movie/${currentBannerMovieId}`;
-                    }
+                    let embedUrl = currentBannerMovieType === "tv"
+                        ? `https://player.vidplus.to/embed/tv/${currentBannerMovieId}/1/1`
+                        : `https://player.vidplus.to/embed/movie/${currentBannerMovieId}`;
                     playFullscreenVideo(embedUrl, false);
                 }
             }
