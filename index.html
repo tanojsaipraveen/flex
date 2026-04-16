@@ -9,6 +9,7 @@
         * {
             margin: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -47,6 +48,7 @@
             width: 90px;
             object-fit: contain;
             cursor: pointer;
+            transition: width 0.3s;
         }
 
         .nav__links {
@@ -176,6 +178,16 @@
             font-size: 1rem;
             max-width: 400px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.45);
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .banner__buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .banner__button {
@@ -184,12 +196,8 @@
             outline: none;
             border: none;
             font-weight: 700;
-            border-radius: 0.2vw;
-            padding-left: 2rem;
-            padding-right: 2rem;
-            margin-right: 1rem;
-            padding-top: 0.5rem;
-            padding-bottom: 0.5rem;
+            border-radius: 4px;
+            padding: 0.5rem 2rem;
             background-color: rgba(51, 51, 51, 0.5);
             transition: all 0.2s;
         }
@@ -224,6 +232,7 @@
             margin-bottom: 10px;
             margin-left: 40px;
             color: #e5e5e5;
+            transition: font-size 0.3s;
         }
 
         .row__posters-wrapper {
@@ -233,13 +242,15 @@
         .row__posters {
             display: flex;
             overflow-y: hidden;
-            overflow-x: scroll;
+            overflow-x: auto;
             padding: 20px 40px;
             scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; /* Firefox */
         }
 
         .row__posters::-webkit-scrollbar {
-            display: none;
+            display: none; /* Chrome/Safari */
         }
 
         /* Horizontal Slider Buttons */
@@ -281,13 +292,6 @@
             border-bottom-left-radius: 4px;
         }
 
-        /* Hide buttons on mobile where touch scroll is native */
-        @media (max-width: 768px) {
-            .row__slider-btn {
-                display: none;
-            }
-        }
-
         .row__poster-wrapper {
             position: relative;
             margin-right: 10px;
@@ -324,7 +328,7 @@
 
         /* Top 10 Specific Styles */
         .row__posters--top10 {
-            align-items: flex-end; /* Align bottoms together */
+            align-items: flex-end; 
         }
 
         .top10__item {
@@ -347,36 +351,25 @@
         }
 
         .top10__number {
-            font-size: 180px;
+            font-size: 240px;
             font-family: 'Arial Black', Impact, sans-serif;
             font-weight: 900;
             line-height: 0.75;
             color: #000;
-            -webkit-text-stroke: 3px #595959;
-            letter-spacing: -8px;
-            margin-right: -35px; /* Overlaps the poster */
+            -webkit-text-stroke: 4px #595959;
+            letter-spacing: -12px;
+            margin-right: -45px; /* Overlaps the poster */
             z-index: 1;
             user-select: none;
+            transition: all 0.3s;
         }
 
         .top10__poster {
-            height: 160px;
+            height: 220px;
             border-radius: 4px;
             z-index: 2;
-            box-shadow: -4px 0px 15px rgba(0,0,0,0.6); /* Cast shadow onto the number */
-            transition: opacity 0.2s;
-        }
-
-        @media (min-width: 768px) {
-            .top10__poster {
-                height: 220px;
-            }
-            .top10__number {
-                font-size: 240px;
-                margin-right: -45px;
-                -webkit-text-stroke: 4px #595959;
-                letter-spacing: -12px;
-            }
+            box-shadow: -4px 0px 15px rgba(0,0,0,0.6);
+            transition: opacity 0.2s, height 0.3s;
         }
 
         .row__movie-logo {
@@ -395,8 +388,7 @@
 
         /* Search View Styles */
         .search-view {
-            padding: 100px 40px 40px 40px; /* Offset for navbar */
-            min-height: 100vh;
+            padding: 100px 40px 40px 40px;
         }
 
         .search-view.hidden {
@@ -417,7 +409,7 @@
             row-gap: 40px;
         }
 
-        /* Modals (Hidden by default) */
+        /* Modals */
         .hidden {
             display: none !important;
         }
@@ -458,13 +450,10 @@
             position: relative;
             box-shadow: 0 4px 15px rgba(0,0,0,0.8);
             margin-bottom: 50px;
-            
-            /* Pop-out transition properties */
             transform: scale(1) translateY(0);
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Initial state of the content when the modal is hidden */
         .modal.hidden .modal__content {
             transform: scale(0.9) translateY(40px);
         }
@@ -492,14 +481,13 @@
             background: rgba(255,255,255,0.2);
         }
 
-        /* Hero Section inside modal */
         .modal__hero {
             position: relative;
             width: 100%;
             height: 480px;
             background-color: #000;
-            /* Added overflow hidden to prevent scaled iframe from bleeding */
             overflow: hidden;
+            transition: height 0.3s;
         }
 
         #modal__image {
@@ -519,10 +507,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none; /* Let clicks pass through to buttons */
+            pointer-events: none; 
             border: none;
-            z-index: 2; /* Above image, below vignette */
-            transform: scale(1.35); /* Zoom in slightly to hide YouTube branding/controls */
+            z-index: 2; 
+            transform: scale(1.35); 
         }
 
         .modal__hero-vignette {
@@ -531,7 +519,6 @@
             left: 0;
             width: 100%;
             height: 70%;
-            /* Fixed gradient to transition seamlessly into the #181818 content background */
             background: linear-gradient(to top, #181818 0%, rgba(24,24,24,0.6) 40%, transparent 100%);
             z-index: 3;
         }
@@ -637,7 +624,6 @@
             height: 20px;
         }
 
-        /* Two Column Info Section */
         .modal__info-container {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -645,16 +631,6 @@
             padding: 0 40px 40px 40px;
             position: relative;
             z-index: 2;
-        }
-
-        @media (max-width: 768px) {
-            .modal__info-container {
-                grid-template-columns: 1fr;
-                padding: 0 20px 20px 20px;
-            }
-            .modal__hero-actions {
-                left: 20px;
-            }
         }
 
         .modal__metadata {
@@ -665,10 +641,11 @@
             font-weight: 500;
             color: #bcbcbc;
             margin-bottom: 15px;
+            flex-wrap: wrap;
         }
 
         .rating {
-            color: #46d369; /* Netflix Match Green */
+            color: #46d369;
             font-weight: bold;
         }
 
@@ -842,14 +819,6 @@
             overflow: hidden;
         }
 
-        @media (max-width: 768px) {
-            .modal__episodes-container { padding: 0 20px 20px 20px; }
-            .episode-item { flex-direction: column; align-items: flex-start; padding: 15px 0; }
-            .episode-number { display: none; }
-            .episode-thumb-wrapper { width: 100%; margin-right: 0; margin-bottom: 10px; height: 180px; }
-            .episode-thumb { height: 100%; }
-        }
-
         /* Shared Grid Style for Trailers and More Like This */
         .modal__more-like-this {
             padding: 0 40px 40px 40px;
@@ -954,6 +923,97 @@
             height: 100%;
             border: none;
         }
+
+        /* =========================================
+           RESPONSIVE MEDIA QUERIES (Mobile & Tablet)
+           ========================================= */
+        
+        @media (max-width: 1024px) {
+            .banner { height: 60vh; }
+            .banner__contents { padding-top: 20vh; }
+            .modal__hero { height: 400px; }
+        }
+
+        @media (max-width: 768px) {
+            /* Navbar */
+            .nav { padding: 15px 20px; }
+            .nav__logo { width: 75px; }
+            .nav__left { gap: 15px; }
+            .nav__right { gap: 15px; }
+            .nav__search.active input { width: 140px; }
+            
+            /* Banner */
+            .banner { height: 50vh; }
+            .banner__contents { margin-left: 20px; padding-top: 18vh; }
+            .banner__title { font-size: 2.2rem; }
+            .banner__description { font-size: 0.9rem; max-width: 90%; -webkit-line-clamp: 3; }
+            .banner__logo { max-width: 250px; max-height: 100px; }
+            
+            /* Rows */
+            .row { margin-bottom: 20px; }
+            .row h2 { margin-left: 20px; font-size: 1rem; }
+            .row__posters { padding: 10px 20px; }
+            .row__posters--top10 { padding-left: 20px; }
+            .row__slider-btn { display: none; } /* Native scroll on mobile */
+            
+            .row__poster { max-height: 110px; }
+            .row__posterLarge { max-height: 200px; }
+            
+            .top10__item { margin-right: 20px; }
+            .top10__poster { height: 120px; }
+            .top10__number { 
+                font-size: 130px; 
+                margin-right: -25px; 
+                -webkit-text-stroke: 2px #595959; 
+                letter-spacing: -5px; 
+            }
+
+            /* Search Grid */
+            .search-view { padding: 80px 20px 20px 20px; }
+            .search-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; row-gap: 25px; }
+            .search-grid .row__poster { max-height: 100px; }
+
+            /* Modal Immersive View */
+            .modal { padding-top: 0; align-items: flex-end; }
+            .modal__content { 
+                width: 100%; 
+                border-radius: 12px 12px 0 0; 
+                margin-bottom: 0; 
+                min-height: 95vh; 
+            }
+            .modal.hidden .modal__content { transform: scale(1) translateY(100%); }
+            
+            .modal__hero { height: 30vh; min-height: 250px; }
+            .modal__hero-actions { left: 20px; right: 20px; bottom: 20px; gap: 10px; }
+            .modal__hero-logo { max-width: 200px; max-height: 80px; }
+            .modal__buttons { gap: 8px; }
+            .modal__btn-play { padding: 0.5rem 1.2rem; font-size: 1rem; }
+            .modal__btn-icon { width: 36px; height: 36px; }
+            .modal__btn-icon svg { width: 16px; height: 16px; }
+            .modal__server-select { padding: 0.5rem; font-size: 0.85rem; }
+
+            .modal__info-container { grid-template-columns: 1fr; padding: 20px; gap: 1.5rem; }
+            .modal__episodes-container { padding: 0 20px 20px 20px; }
+            .modal__more-like-this { padding: 0 20px 20px 20px; }
+            .modal__grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+            .modal__grid-item { height: 100px; }
+            
+            /* Mobile Episodes */
+            .episode-item { flex-direction: column; align-items: flex-start; padding: 15px 0; }
+            .episode-number { display: none; }
+            .episode-thumb-wrapper { width: 100%; margin-right: 0; margin-bottom: 10px; height: auto; aspect-ratio: 16/9; }
+            .episode-thumb { height: 100%; }
+        }
+
+        @media (max-width: 480px) {
+            .banner__logo { max-width: 200px; }
+            .banner__title { font-size: 1.8rem; }
+            .row__poster { max-height: 90px; }
+            .row__posterLarge { max-height: 160px; }
+            .modal__btn-play { width: 100%; justify-content: center; margin-bottom: 5px; } /* Full width play button on very small screens */
+            .modal__server-select { flex-grow: 1; }
+            .top10__number { font-size: 110px; }
+        }
     </style>
 </head>
 <body>
@@ -997,7 +1057,6 @@
             <div class="banner__contents">
                 <h1 id="banner__title" class="banner__title"></h1>
                 <div class="banner__buttons">
-                    <!-- Added ID to the banner play button -->
                     <button id="banner__btn-play" class="banner__button">Play</button>
                     <button class="banner__button">My List</button>
                 </div>
@@ -1025,7 +1084,6 @@
             
             <div class="modal__hero">
                 <img id="modal__image" src="" alt="Movie Image">
-                <!-- Changed src to about:blank to prevent Chrome local file errors -->
                 <iframe id="modal__trailer-iframe" src="about:blank" class="hidden" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" frameborder="0"></iframe>
                 <div class="modal__hero-vignette"></div>
                 <div class="modal__hero-actions">
@@ -1038,7 +1096,6 @@
                             Play
                         </button>
                         
-                        <!-- Extra Netflix Actions from Screenshot -->
                         <button class="modal__btn-icon" title="Add to My List">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                         </button>
@@ -1086,7 +1143,7 @@
                 </div>
             </div>
 
-            <!-- New Episodes Section (TV Shows Only) -->
+            <!-- Episodes Section (TV Shows Only) -->
             <div class="modal__episodes-container" id="modal__episodes-container" style="display: none;">
                 <div class="modal__episodes-header">
                     <h3>Episodes</h3>
@@ -1097,7 +1154,7 @@
                 </div>
             </div>
 
-            <!-- New Trailers & Clips Section -->
+            <!-- Trailers & Clips Section -->
             <div class="modal__more-like-this" id="modal__trailers-container" style="display: none;">
                 <h3>Trailers & Clips</h3>
                 <div class="modal__grid" id="modal__trailers-grid">
@@ -1117,7 +1174,6 @@
     <!-- Full Screen Video Player Modal overlay -->
     <div id="video-player-modal" class="video-modal hidden">
         <span class="video-modal__close">&times;</span>
-        <!-- Changed src to about:blank to prevent Chrome local file errors -->
         <iframe id="video-player-iframe" src="about:blank" width="100%" height="100%" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
 
@@ -1175,9 +1231,9 @@
 
         // State for tracking the currently selected movie/show in MODAL
         let currentMovieId = null;
-        let currentMovieType = "movie"; // defaults to movie
-        let currentMovieTrailerKey = null; // Saves main trailer for play button
-        let isTrailerMuted = true; // State for the background trailer mute toggle
+        let currentMovieType = "movie"; 
+        let currentMovieTrailerKey = null; 
+        let isTrailerMuted = true; 
 
         // State for tracking the currently selected movie/show in BANNER
         let currentBannerMovieId = null;
@@ -1189,7 +1245,7 @@
         
         const BASE_URL = "https://api.themoviedb.org/3";
         const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/original";
-        const IMAGE_BASE_URL_SMALL = "https://image.tmdb.org/t/p/w500"; // For smaller grid images/logos
+        const IMAGE_BASE_URL_SMALL = "https://image.tmdb.org/t/p/w500"; 
 
         // Helper dates for "Now Playing" endpoints
         const todayDate = new Date().toISOString().split('T')[0];
@@ -1249,7 +1305,7 @@
                 } else {
                     clearSearch();
                 }
-            }, 500); // Debounce
+            }, 500); 
         });
 
         function clearSearch() {
@@ -1265,13 +1321,12 @@
             searchQueryDisplay.innerText = `Explore titles related to: ${query}`;
             mainView.classList.add("hidden");
             searchView.classList.remove("hidden");
-            searchGrid.innerHTML = ""; // clear previous results
+            searchGrid.innerHTML = ""; 
 
             try {
                 const response = await fetch(`${BASE_URL}/search/multi?api_key=${API_KEY}&language=en-US&query=${encodeURIComponent(query)}&page=1&include_adult=false`);
                 const data = await response.json();
                 
-                // Filter out results that are people or have no images
                 const validResults = data.results.filter(item => 
                     item.media_type !== "person" && (item.backdrop_path || item.poster_path)
                 );
@@ -1283,23 +1338,19 @@
 
                 validResults.forEach(movie => {
                     const actualMediaType = movie.media_type || "movie";
-                    
                     const wrapper = document.createElement("div");
                     wrapper.classList.add("row__poster-wrapper");
-                    wrapper.style.marginRight = "0"; // Override row margin for grid
+                    wrapper.style.marginRight = "0"; 
                     
-                    // Prioritize backdrop for search view, fallback to poster
                     const imagePath = movie.backdrop_path || movie.poster_path;
                     const img = document.createElement("img");
                     img.classList.add("row__poster");
-                    img.style.maxHeight = "160px"; // Slightly taller for search view
                     img.src = `${IMAGE_BASE_URL_SMALL}${imagePath}`;
                     img.alt = movie.name || movie.title;
                     
                     wrapper.appendChild(img);
                     searchGrid.appendChild(wrapper);
 
-                    // Fetch logo
                     fetch(`${BASE_URL}/${actualMediaType}/${movie.id}/images?api_key=${API_KEY}`)
                         .then(res => res.json())
                         .then(imgData => {
@@ -1330,11 +1381,9 @@
                 const response = await fetch(BASE_URL + requests.fetchNetflixOriginals);
                 const data = await response.json();
                 
-                // Pick a random tv show for the main hero
                 const randomMovie = data.results[Math.floor(Math.random() * data.results.length)];
                 const actualMediaType = randomMovie.media_type || "tv";
                 
-                // Save info so the banner Play button knows what to play
                 currentBannerMovieId = randomMovie.id;
                 currentBannerMovieType = actualMediaType;
                 
@@ -1342,7 +1391,6 @@
                 
                 const titleText = randomMovie?.title || randomMovie?.name || randomMovie?.original_name || "Title Unavailable";
                 
-                // Fetch Trailer Key for Banner Play Button
                 fetch(`${BASE_URL}/${actualMediaType}/${randomMovie.id}/videos?api_key=${API_KEY}`)
                     .then(res => res.json())
                     .then(vData => {
@@ -1350,14 +1398,12 @@
                         if (trailer) currentBannerTrailerKey = trailer.key;
                     });
 
-                // Fetch the Title Logo for the Banner
                 try {
                     const imgRes = await fetch(`${BASE_URL}/${actualMediaType}/${randomMovie.id}/images?api_key=${API_KEY}`);
                     const imgData = await imgRes.json();
                     const logos = imgData.logos;
                     
                     if (logos && logos.length > 0) {
-                        // Prioritize english logo, fallback to the first one available
                         const enLogo = logos.find(l => l.iso_639_1 === 'en') || logos[0];
                         const bannerLogo = document.createElement("img");
                         bannerLogo.src = `${IMAGE_BASE_URL_SMALL}${enLogo.file_path}`;
@@ -1386,41 +1432,31 @@
                 const data = await response.json();
                 const movies = data.results;
 
-                // Create row container
                 const rowElement = document.createElement("div");
                 rowElement.classList.add("row");
 
-                // Create row title
                 const rowTitleElement = document.createElement("h2");
                 rowTitleElement.innerText = title;
                 rowElement.appendChild(rowTitleElement);
 
-                // Create wrapper for sliders and posters
                 const wrapperElement = document.createElement("div");
                 wrapperElement.classList.add("row__posters-wrapper");
 
-                // Slider Left Button
                 const leftBtn = document.createElement("button");
                 leftBtn.classList.add("row__slider-btn", "row__slider-btn--left");
                 leftBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><polyline points="15 18 9 12 15 6"></polyline></svg>';
                 wrapperElement.appendChild(leftBtn);
 
-                // Create posters container
                 const postersContainer = document.createElement("div");
                 postersContainer.classList.add("row__posters");
 
-                // Append images
                 movies.forEach(movie => {
                     if ((isLargeRow && movie.poster_path) || (!isLargeRow && movie.backdrop_path)) {
                         
-                        // We wrap the image in a container to overlay the logo!
                         const wrapper = document.createElement("div");
                         wrapper.classList.add("row__poster-wrapper");
-                        if (isLargeRow) {
-                            wrapper.classList.add("row__posterLarge-wrapper");
-                        }
+                        if (isLargeRow) wrapper.classList.add("row__posterLarge-wrapper");
 
-                        // The actual movie image
                         const img = document.createElement("img");
                         img.classList.add("row__poster");
                         if (isLargeRow) {
@@ -1434,10 +1470,8 @@
                         wrapper.appendChild(img);
                         postersContainer.appendChild(wrapper);
 
-                        // Identify if tv or movie so we can fetch the logo correctly
                         const actualMediaType = movie.media_type || defaultMediaType;
 
-                        // Fetch real movie logo for backdrops asynchronously
                         if (!isLargeRow) {
                             fetch(`${BASE_URL}/${actualMediaType}/${movie.id}/images?api_key=${API_KEY}`)
                                 .then(res => res.json())
@@ -1456,24 +1490,16 @@
                                 .catch(e => console.error("Logo fetch error:", e));
                         }
                         
-                        // Add click event to open modal
                         wrapper.addEventListener("click", () => openModal(movie, actualMediaType));
                     }
                 });
 
-                // Slider Right Button
                 const rightBtn = document.createElement("button");
                 rightBtn.classList.add("row__slider-btn", "row__slider-btn--right");
                 rightBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><polyline points="9 18 15 12 9 6"></polyline></svg>';
                 
-                // Horizontal scrolling events
-                leftBtn.addEventListener("click", () => {
-                    postersContainer.scrollBy({ left: -window.innerWidth / 1.5, behavior: 'smooth' });
-                });
-                
-                rightBtn.addEventListener("click", () => {
-                    postersContainer.scrollBy({ left: window.innerWidth / 1.5, behavior: 'smooth' });
-                });
+                leftBtn.addEventListener("click", () => postersContainer.scrollBy({ left: -window.innerWidth / 1.5, behavior: 'smooth' }));
+                rightBtn.addEventListener("click", () => postersContainer.scrollBy({ left: window.innerWidth / 1.5, behavior: 'smooth' }));
 
                 wrapperElement.appendChild(postersContainer);
                 wrapperElement.appendChild(rightBtn);
@@ -1491,7 +1517,6 @@
             try {
                 const response = await fetch(BASE_URL + fetchUrl);
                 const data = await response.json();
-                // Get exactly top 10
                 const movies = data.results.slice(0, 10);
 
                 const rowElement = document.createElement("div");
@@ -1501,11 +1526,9 @@
                 rowTitleElement.innerText = title;
                 rowElement.appendChild(rowTitleElement);
 
-                // Create wrapper for sliders and posters
                 const wrapperElement = document.createElement("div");
                 wrapperElement.classList.add("row__posters-wrapper");
 
-                // Slider Left Button
                 const leftBtn = document.createElement("button");
                 leftBtn.classList.add("row__slider-btn", "row__slider-btn--left");
                 leftBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><polyline points="15 18 9 12 15 6"></polyline></svg>';
@@ -1519,12 +1542,10 @@
                         const item = document.createElement("div");
                         item.classList.add("top10__item");
 
-                        // Giant Number element
                         const number = document.createElement("span");
                         number.classList.add("top10__number");
                         number.innerText = index + 1;
 
-                        // Poster image element
                         const img = document.createElement("img");
                         img.classList.add("top10__poster");
                         img.src = `${IMAGE_BASE_URL_SMALL}${movie.poster_path}`;
@@ -1533,25 +1554,17 @@
                         item.appendChild(number);
                         item.appendChild(img);
 
-                        // Add click event to open modal
                         item.addEventListener("click", () => openModal(movie, mediaType));
                         postersContainer.appendChild(item);
                     }
                 });
 
-                // Slider Right Button
                 const rightBtn = document.createElement("button");
                 rightBtn.classList.add("row__slider-btn", "row__slider-btn--right");
                 rightBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><polyline points="9 18 15 12 9 6"></polyline></svg>';
                 
-                // Horizontal scrolling events
-                leftBtn.addEventListener("click", () => {
-                    postersContainer.scrollBy({ left: -window.innerWidth / 1.5, behavior: 'smooth' });
-                });
-                
-                rightBtn.addEventListener("click", () => {
-                    postersContainer.scrollBy({ left: window.innerWidth / 1.5, behavior: 'smooth' });
-                });
+                leftBtn.addEventListener("click", () => postersContainer.scrollBy({ left: -window.innerWidth / 1.5, behavior: 'smooth' }));
+                rightBtn.addEventListener("click", () => postersContainer.scrollBy({ left: window.innerWidth / 1.5, behavior: 'smooth' }));
 
                 wrapperElement.appendChild(postersContainer);
                 wrapperElement.appendChild(rightBtn);
@@ -1597,13 +1610,11 @@
                             </div>
                         `;
                         
-                        // Click to play the specific episode!
                         item.addEventListener("click", () => {
                             const serverChoice = serverSelect.value;
                             let embedUrl = "";
                             
                             if (serverChoice === "vidking" || serverChoice === "tmdb") {
-                                // Default to vidking for episode streaming
                                 embedUrl = `https://www.vidking.net/embed/tv/${tvId}/${seasonNumber}/${ep.episode_number}?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true`;
                                 playFullscreenVideo(embedUrl, false);
                             } else if (serverChoice === "vidplus") {
@@ -1623,7 +1634,6 @@
             }
         }
 
-        // Listener for Season Dropdown Change
         modalSeasonSelect.addEventListener("change", (e) => {
             if (currentMovieId && currentMovieType === 'tv') {
                 loadSeasonEpisodes(currentMovieId, e.target.value);
@@ -1633,11 +1643,10 @@
         // 5. Modal Logic
         function openModal(movie, mediaType) {
             currentMovieId = movie.id;
-            currentMovieTrailerKey = null; // Reset trailer key
-            isTrailerMuted = true; // Always start muted
+            currentMovieTrailerKey = null; 
+            isTrailerMuted = true; 
             updateMuteButtonIcon();
             
-            // Set the correct media type for iframe routing
             if (mediaType) {
                 currentMovieType = mediaType;
             } else if (movie.media_type) {
@@ -1648,33 +1657,27 @@
                 currentMovieType = "movie";
             }
 
-            // Temporarily set the text title
             const titleText = movie?.title || movie?.name || movie?.original_name || "Title Unavailable";
             modalTitleOverlay.innerHTML = titleText;
             
-            // Set basic details immediately
             modalDesc.innerText = movie?.overview || "No description available.";
             
-            // Prefer backdrop, fallback to poster
             const imagePath = movie.backdrop_path || movie.poster_path;
             modalImg.src = imagePath ? `${IMAGE_BASE_URL}${imagePath}` : "";
             
-            // Create a fake percentage match based on TMDB's vote average
             const rating = movie.vote_average ? (movie.vote_average * 10).toFixed(0) : 0;
             modalRating.innerText = rating > 0 ? `${rating}% Match` : "98% Match";
             
             const rawDate = movie.release_date || movie.first_air_date || "";
             modalDate.innerText = rawDate ? rawDate.substring(0, 4) : "2024";
 
-            // Reset dynamic fields & trailer
             modalCast.innerText = "Loading...";
             modalGenres.innerText = "Loading...";
             modalCrew.innerText = "Loading...";
-            modalTrailerIframe.src = "about:blank"; // Prevents Chrome local file errors
+            modalTrailerIframe.src = "about:blank"; 
             modalTrailerIframe.classList.add("hidden");
             modalEpisodesContainer.style.display = "none";
 
-            // Attempt to Fetch Logo for the Modal overlay
             fetch(`${BASE_URL}/${currentMovieType}/${movie.id}/images?api_key=${API_KEY}`)
                 .then(res => res.json())
                 .then(imgData => {
@@ -1690,18 +1693,15 @@
                 })
                 .catch(e => console.error("Error fetching modal logo:", e));
 
-            // Fetch detailed cast, crew, genres and seasons
             fetch(`${BASE_URL}/${currentMovieType}/${movie.id}?api_key=${API_KEY}&append_to_response=credits`)
                 .then(res => res.json())
                 .then(data => {
-                    // Update Genres
                     if (data.genres && data.genres.length > 0) {
                         modalGenres.innerText = data.genres.map(g => g.name).join(", ");
                     } else {
                         modalGenres.innerText = "Not Available";
                     }
 
-                    // Update Cast (Top 5)
                     if (data.credits && data.credits.cast && data.credits.cast.length > 0) {
                         const topCast = data.credits.cast.slice(0, 5).map(c => c.name);
                         modalCast.innerHTML = topCast.join(", ") + (data.credits.cast.length > 5 ? ", <i>more</i>" : "");
@@ -1709,7 +1709,6 @@
                         modalCast.innerText = "Not Available";
                     }
 
-                    // Update Crew (Director for Movies, Creator for TV)
                     if (currentMovieType === "movie") {
                         const directors = data.credits?.crew?.filter(c => c.job === "Director");
                         modalCrewLabel.innerText = "Director:";
@@ -1720,9 +1719,7 @@
                         modalCrew.innerText = creators?.length > 0 ? creators.map(c => c.name).join(", ") : "Not Available";
                     }
                     
-                    // Load Seasons and Episodes if TV Show
                     if (currentMovieType === "tv" && data.seasons && data.seasons.length > 0) {
-                        // Filter out 'Specials' (usually Season 0) to match standard Netflix flow
                         const validSeasons = data.seasons.filter(s => s.season_number > 0);
                         if (validSeasons.length > 0) {
                             modalEpisodesContainer.style.display = "block";
@@ -1735,7 +1732,6 @@
                                 modalSeasonSelect.appendChild(opt);
                             });
                             
-                            // Load first valid season by default
                             loadSeasonEpisodes(movie.id, validSeasons[0].season_number);
                         }
                     }
@@ -1747,13 +1743,11 @@
                     modalCrew.innerText = "Unavailable";
                 });
 
-            // Fetch Trailers and Videos from TMDB API
             fetch(`${BASE_URL}/${currentMovieType}/${movie.id}/videos?api_key=${API_KEY}`)
                 .then(res => res.json())
                 .then(videoData => {
                     if (videoData.results && videoData.results.length > 0) {
                         
-                        // 1. Play the best trailer in the background hero
                         const trailer = videoData.results.find(v => v.site === 'YouTube' && v.type === 'Trailer') || videoData.results.find(v => v.site === 'YouTube');
                         if (trailer) {
                             currentMovieTrailerKey = trailer.key;
@@ -1761,11 +1755,10 @@
                             modalTrailerIframe.classList.remove("hidden");
                         }
 
-                        // 2. Populate the "Trailers & Clips" grid section
                         const youtubeVideos = videoData.results.filter(v => v.site === 'YouTube').slice(0, 6);
                         if (youtubeVideos.length > 0) {
                             modalTrailersContainer.style.display = "block";
-                            modalTrailersGrid.innerHTML = ""; // Clear existing
+                            modalTrailersGrid.innerHTML = ""; 
 
                             youtubeVideos.forEach(vid => {
                                 const gridItem = document.createElement('div');
@@ -1775,7 +1768,6 @@
                                 img.src = `https://img.youtube.com/vi/${vid.key}/hqdefault.jpg`;
                                 img.alt = vid.name;
                                 
-                                // Overlay Play Icon
                                 const playIcon = document.createElement('div');
                                 playIcon.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
                                 playIcon.classList.add('modal__trailer-icon');
@@ -1783,7 +1775,6 @@
                                 gridItem.appendChild(img);
                                 gridItem.appendChild(playIcon);
 
-                                // On Click, play the trailer with sound in the main video player overlay
                                 gridItem.addEventListener('click', () => {
                                     playFullscreenVideo(`https://www.youtube-nocookie.com/embed/${vid.key}?autoplay=1&rel=0`, true);
                                 });
@@ -1799,15 +1790,12 @@
                 })
                 .catch(err => console.error("Error fetching trailer:", err));
 
-            // Mocking "More Like This"
             populateMockMoreLikeThis();
 
-            // Show the modal and prevent body scroll
             modal.classList.remove("hidden");
             document.body.style.overflow = "hidden";
         }
 
-        // Handle Background Trailer Mute Toggle
         function updateMuteButtonIcon() {
             modalMuteBtn.innerHTML = isTrailerMuted 
                 ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>' 
@@ -1818,20 +1806,15 @@
             isTrailerMuted = !isTrailerMuted;
             updateMuteButtonIcon();
             if (currentMovieTrailerKey) {
-                // Reload the iframe with the new mute state (0 or 1)
                 modalTrailerIframe.src = `https://www.youtube-nocookie.com/embed/${currentMovieTrailerKey}?autoplay=1&mute=${isTrailerMuted ? '1' : '0'}&controls=0&playsinline=1&modestbranding=1&loop=1&playlist=${currentMovieTrailerKey}`;
             }
         });
 
-        // Helper to grab random posters and their logos currently on screen
         function populateMockMoreLikeThis() {
             modalMoreGrid.innerHTML = "";
-            
-            // Querying the actual images inside the wrappers
             const allPosters = document.querySelectorAll('.row__poster:not(.row__posterLarge)');
             if(allPosters.length === 0) return;
 
-            // Pick 6 random posters
             for(let i=0; i<6; i++) {
                 const randomIdx = Math.floor(Math.random() * allPosters.length);
                 const sourceImg = allPosters[randomIdx];
@@ -1844,7 +1827,6 @@
                 img.src = sourceImg.src;
                 gridItem.appendChild(img);
 
-                // Clone the movie logo if it successfully loaded in the row earlier
                 const existingLogo = sourceWrapper.querySelector(".row__movie-logo");
                 if (existingLogo) {
                     const logoImg = document.createElement('img');
@@ -1857,22 +1839,12 @@
             }
         }
 
-        // Handle Play button click inside Details Modal
         modalPlayBtn.addEventListener("click", () => {
             if (currentMovieId) {
                 let embedUrl = "";
                 const serverChoice = serverSelect.value;
                 
-                // Route to TMDB YouTube Trailer or the Streaming Servers
-                if (serverChoice === "tmdb") {
-                    if (currentMovieTrailerKey) {
-                        embedUrl = `https://www.youtube-nocookie.com/embed/${currentMovieTrailerKey}?autoplay=1`;
-                        playFullscreenVideo(embedUrl, true);
-                    } else {
-                        alert("Official trailer not found for this title.");
-                        return;
-                    }
-                } else if (serverChoice === "vidking") {
+                if (serverChoice === "vidking" || serverChoice === "tmdb") {
                     if (currentMovieType === "tv") {
                         embedUrl = `https://www.vidking.net/embed/tv/${currentMovieId}/1/1?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true`;
                     } else {
@@ -1890,21 +1862,12 @@
             }
         });
 
-        // Handle Play button click on the main Banner
         bannerPlayBtn.addEventListener("click", () => {
             if (currentBannerMovieId) {
                 let embedUrl = "";
                 const serverChoice = serverSelect.value; 
                 
-                if (serverChoice === "tmdb") {
-                    if (currentBannerTrailerKey) {
-                        embedUrl = `https://www.youtube-nocookie.com/embed/${currentBannerTrailerKey}?autoplay=1`;
-                        playFullscreenVideo(embedUrl, true);
-                    } else {
-                        alert("Official trailer not found for this title.");
-                        return;
-                    }
-                } else if (serverChoice === "vidking") {
+                if (serverChoice === "vidking" || serverChoice === "tmdb") {
                     if (currentBannerMovieType === "tv") {
                         embedUrl = `https://www.vidking.net/embed/tv/${currentBannerMovieId}/1/1?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true`;
                     } else {
@@ -1922,36 +1885,32 @@
             }
         });
 
-        // Close the Video Player Modal
         closeVideoBtn.addEventListener("click", () => {
             videoModal.classList.add("hidden");
-            videoIframe.src = "about:blank"; // Clear src to stop video/audio from playing in background
+            videoIframe.src = "about:blank"; 
         });
 
-        // Close Details Modal via the "X" button
         closeModalBtn.addEventListener("click", () => {
             modal.classList.add("hidden");
             document.body.style.overflow = "auto";
-            modalTrailerIframe.src = "about:blank"; // Stop background trailer
+            modalTrailerIframe.src = "about:blank"; 
         });
 
-        // Close Details Modal by clicking the dark background outside the content box
         modal.addEventListener("click", (e) => {
             if (e.target.id === "movie-modal") {
                 modal.classList.add("hidden");
                 document.body.style.overflow = "auto";
-                modalTrailerIframe.src = "about:blank"; // Stop background trailer
+                modalTrailerIframe.src = "about:blank"; 
             }
         });
 
         // Initialization
         buildBanner();
-        // Passing default mediaType guarantees the correct TMDB /images API endpoint routes
         buildTop10Row("Top 10 Shows in India Today", requests.fetchTop10Shows, "tv");
         buildTop10Row("Top 10 Movies in India Today", requests.fetchTop10Movies, "movie");
         buildRow("NETFLIX ORIGINALS", requests.fetchNetflixOriginals, true, "tv");
         buildRow("Trending Now", requests.fetchTrending, false, "movie");
-        buildRow("Now Playing Telugu Movies", requests.fetchTeluguMovies, false, "movie"); // Updated Title
+        buildRow("Now Playing Telugu Movies", requests.fetchTeluguMovies, false, "movie");
         buildRow("Top Rated", requests.fetchTopRated, false, "movie");
         buildRow("Action Movies", requests.fetchActionMovies, false, "movie");
         buildRow("Comedy Movies", requests.fetchComedyMovies, false, "movie");
