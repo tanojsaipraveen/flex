@@ -907,10 +907,11 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%; /* Fallback */
+            height: 100dvh; /* Dynamic viewport height to prevent browser nav overlap */
             background-color: #000;
-            z-index: 200; /* Above the details modal */
+            z-index: 9999; /* Ensure it stays above absolutely everything */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -927,7 +928,7 @@
             color: rgba(255, 255, 255, 0.7);
             font-size: 40px;
             cursor: pointer;
-            z-index: 201;
+            z-index: 10000;
             font-weight: bold;
             transition: color 0.2s;
             text-shadow: 0 2px 4px rgba(0,0,0,0.8);
